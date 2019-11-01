@@ -16,7 +16,7 @@ class Organisation(models.Model):
     sigle = models.CharField(max_length=10)
    
     def __str__(self):
-    	return f"{self.sigle} - {self.titre[15]}"
+    	return f"{self.sigle} - {self.titre[:15]}..."
 
 class Client(models.Model):
     nom= models.CharField(max_length=32)
@@ -24,8 +24,8 @@ class Client(models.Model):
     CNI= models.CharField(max_length=16, unique=True)
     avatar = models.ImageField(upload_to="avatars")
     email = models.EmailField(null=True)
+    tel = models.CharField(max_length=24)
     depuis = models.DateField(default=timezone.now)
-    materiel = models.ManyToManyField("MaterielRoulant", through="Assurance", null=True)
 
     def __str__(self):
     	return f"{self.nom} {self.prenom}"
@@ -42,10 +42,11 @@ class Assurance(models.Model):
     	return f"{self.materiel} - {self.client}"
 
 class MaterielRoulant(models.Model):
-	nom = models.CharField(max_length=100)
-	plaque = models.CharField(max_length=100)
-	chassis = models.CharField(max_length=100)
-	roues = models.IntegerField(verbose_name='nombre de roues')
+    nom = models.CharField(max_length=100)
+    plaque = models.CharField(max_length=100)
+    chassis = models.CharField(max_length=100)
+    roues = models.IntegerField(verbose_name='nombre de roues')
+    client = models.ForeignKey("Client", related_name='proprietaire', on_delete=models.CASCADE)
 
-	def __str__(self):
-		return f"{self.materiel} - {self.client}"
+    def __str__(self):
+    	return f"{self.nom} - {self.plaque}"
