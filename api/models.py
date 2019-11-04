@@ -39,7 +39,7 @@ class Assurance(models.Model):
     fin = models.DateField(verbose_name='date d\'expiration', default=timezone.now)
 
     def __str__(self):
-    	return f"{self.materiel} - {self.client}"
+    	return f"{self.materiel} {self.client}"
 
 class MaterielRoulant(models.Model):
     nom = models.CharField(max_length=100)
@@ -49,4 +49,4 @@ class MaterielRoulant(models.Model):
     client = models.ForeignKey("Client", related_name='proprietaire', on_delete=models.CASCADE)
 
     def __str__(self):
-    	return f"{self.nom} - {self.plaque}"
+    	return f"{self.plaque} : {self.nom}"

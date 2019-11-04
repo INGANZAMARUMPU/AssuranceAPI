@@ -64,7 +64,7 @@ def login(request):
 		user = User.objects.get(username=username)
 		if user.check_password(password):
 			data["avatar"] = user.agent.avatar.url
-			data["organisation"] = user.agent.organisation.titre
+			data["organisation"] = user.agent.organisation.sigle
 			try:
 				token = Token.objects.create(user=user)
 				token.save()
