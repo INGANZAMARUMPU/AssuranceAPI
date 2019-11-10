@@ -11,6 +11,8 @@ router.register('materiels', views.MaterielViewSet)
 
 urlpatterns = [
 	path('', include(router.urls)),
+	path('get_auto', views.get_auto, name='get_auto'),
+	path('get_client', views.get_client, name='get_client'),
 	path('login', views.login, name='login'),
 	path('logout', views.logout, name='logout')
 ]

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import date
 
 class Agent(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -22,10 +23,10 @@ class Client(models.Model):
     nom= models.CharField(max_length=32)
     prenom= models.CharField(max_length=32)
     CNI= models.CharField(max_length=16, unique=True)
-    avatar = models.ImageField(upload_to="avatars")
+    avatar = models.ImageField(upload_to="avatars", blank=True, null=True)
     email = models.EmailField(null=True)
     tel = models.CharField(max_length=24)
-    depuis = models.DateField(default=timezone.now)
+    depuis = models.DateField(default=date.today)
 
     def __str__(self):
     	return f"{self.nom} {self.prenom}"

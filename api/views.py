@@ -1,8 +1,7 @@
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework.decorators import (
@@ -25,28 +24,105 @@ class AssuranceViewSet(viewsets.ModelViewSet):
 	queryset = Assurance.objects.all()
 	serializer_class = AssuranceSerializer
 
-class MaterielViewSet(viewsets.ModelViewSet):
-    queryset = MaterielRoulant.objects.all()
-    serializer_class = MaterielRoulantSerializer		
+	def update(self, request, pk=None):
+		no_police = request.POST["no_police"]
+		montant = request.POST["montant"]
+		debut = request.POST["debut"]
+		plaque = request.POST["plaque"]
+		CNI = request.POST["CNI"]
+		fin = request.POST["fin"]
 
-# class UserViewSet(viewsets.ViewSet):
-#     def list(self, request):
-#         pass
-#     def create(self, request):
-#         pass
-#     def retrieve(self, request, pk=None):
-#         pass
-#     def update(self, request, pk=None):
-#         pass
-#     def partial_update(self, request, pk=None):
-#         pass
-#     def destroy(self, request, pk=None):
-#         pass
+		client = Client.objects.get(CNI=CNI)
+		materiel = MaterielRoulant.objects.get(plaque=plaque)
+
+		assurance = Assurance.objects.get(id=pk)
+
+		assurance.no_police=no_police
+		assurance.montant=montant
+		assurance.debut=debut
+		assurance.materiel=materiel
+		assurance.client=client
+		assurance.fin=fin
+
+		assurance.save()
+		return Response([{"success": 'updated succesfully'}])
+
+	def create(self, request, *args, **kwargs):
+		no_police = request.POST["no_police"]
+		montant = request.POST["montant"]
+		debut = request.POST["debut"]
+		plaque = request.POST["plaque"]
+		CNI = request.POST["CNI"]
+		fin = request.POST["fin"]
+
+		client = Client.objects.get(CNI=CNI)
+		materiel = MaterielRoulant.objects.get(plaque=plaque)
+		Assurance(no_police=no_police, montant=montant, debut=debut,
+					materiel=materiel, client=client, fin=fin).save()
+
+		return Response([{"success": 'created succesfully'}])
+
+class MaterielViewSet(viewsets.ModelViewSet):
+	queryset = MaterielRoulant.objects.all()
+	serializer_class = MaterielRoulantSerializer
+
+	def update(self, request, pk=None):
+		nom = request.POST['nom']
+		plaque = request.POST['plaque']
+		chassis = request.POST['chassis']
+		roues = request.POST['roues']
+		CNI = request.POST['CNI']
+
+		client = Client.objects.get(CNI=CNI)
+		materiel = MaterielRoulant.objects.get(id=pk)
+
+		materiel.nom = nom
+		materiel.plaque = plaque
+		materiel.chassis = chassis
+		materiel.roues = roues
+		materiel.CNI = CNI
+
+		materiel.save()
+		return Response([{"success": 'updated succesfully'}])
+
+	def create(self, request, *args, **kwargs):
+		nom = request.POST['nom']
+		plaque = request.POST['plaque']
+		chassis = request.POST['chassis']
+		roues = request.POST['roues']
+		CNI = request.POST['CNI']
+
+		client = Client.objects.get(CNI=CNI)
+		MaterielRoulant(nom=nom, plaque=plaque, chassis=chassis,
+						roues=roues, client=client).save()
+
+		return Response([{"success": 'created succesfully'}])	
 
 @api_view(["GET",])
 def logout(request):
 	request.user.auth_token.delete()
 	return Response([{"success" : "loged out succesfully"}])
+
+@api_view(["GET",])
+def get_client(request, CNI):
+	data = {}
+	try:
+		client = Client.objects.get(CNI=request.GET["CNI"])
+		data["result"] = client.nom+' '+client.prenom
+	except Exception:
+		data['result'] = 'client non trouvé'
+	return Response([data])
+
+
+@api_view(["GET",])
+def get_auto(request, plaque):
+	data = {}
+	try:
+		auto = MaterielRoulant.objects.get(plaque=request.GET["plaque"])
+		data["result"] = auto.nom
+	except Exception:
+		data['result'] = 'automobile non trouvé'
+	return Response([data])
 
 @api_view(["POST", "GET"])
 @authentication_classes([])

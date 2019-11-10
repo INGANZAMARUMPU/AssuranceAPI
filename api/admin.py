@@ -27,7 +27,7 @@ class OrganisationAdmin(admin.ModelAdmin):
     search_field = ("titre", "sigle")
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ("nom", "prenom", "CNI", "avatar", "email", "depuis")
+    list_display = ("nom", "prenom", "CNI", "tel", "email", "depuis")
     list_filter = ("nom", "prenom", "CNI", "depuis")
     ordering = ("nom", "prenom", "CNI", "depuis")
     search_field = ("nom", "prenom", "CNI", "depuis")
