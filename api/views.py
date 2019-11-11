@@ -104,7 +104,7 @@ def logout(request):
 	return Response([{"success" : "loged out succesfully"}])
 
 @api_view(["GET",])
-def get_client(request, CNI):
+def get_client(request):
 	data = {}
 	try:
 		client = Client.objects.get(CNI=request.GET["CNI"])
@@ -115,7 +115,7 @@ def get_client(request, CNI):
 
 
 @api_view(["GET",])
-def get_auto(request, plaque):
+def get_auto(request):
 	data = {}
 	try:
 		auto = MaterielRoulant.objects.get(plaque=request.GET["plaque"])
